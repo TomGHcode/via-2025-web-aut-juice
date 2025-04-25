@@ -1,4 +1,7 @@
+import { homedir } from "os";
 import { HomePage } from "../pageObjects/HomePage";
+import { RegistrationPage } from "../pageObjects/registrationPage";
+import { LoginPage } from "../pageObjects/LoginPage";
 
 describe("Juice-shop scenarios", () => {
   context("Without auto login", () => {
@@ -10,31 +13,58 @@ describe("Juice-shop scenarios", () => {
 
     it("Login", () => {
       // Click Account button
+      HomePage.accountButton.click();
       // Click Login button
+      HomePage.loginButton.click();
       // Set email value to "demo"
+      LoginPage.emailField.type("demo");
       // Set password value to "demo"
+      LoginPage.passwordField.type("demo");
       // Click Log in
+      LoginPage.loginButton.click();
       // Click Account button
+      HomePage.accountButton.click();
       // Validate that "demo" account name appears in the menu section
+      HomePage.userProfileButton.should("contain.text", "demo");
     });
 
     it("Registration", () => {
       // Click Account button
+      HomePage.accountButton.click();
       // Login button
+      HomePage.loginButton.click();
       // Click "Not yet a customer?"
+      LoginPage.notYetCustomerLink.click();
       // Find - how to generate random number in JS
       // Use that number to genarate unique email address, e.g.: email_7584@ebox.com
+      const randomNumber = Math.floor(Math.random() * 900000) + 100000;
       // Save that email address to some variable
+      const emailAddress = `email_$(randomNumber)@ebox.com`;
+      const password = "ABC123#()";
+      RegistrationPage.emailField.type(emailAddress);
       // Fill in password field and repeat password field with same password
+      RegistrationPage.passwordField.type(password);
+      RegistrationPage.repeatPasswordField.type(password);
       // Click on Security Question menu
+      RegistrationPage.securityQuestionField.click();
       // Select  "Name of your favorite pet?"
+      RegistrationPage.securityQuestionOptions
+      .contains("Name of your favorite pet?")
+      .click();
       // Fill in answer
+      RegistrationPage.answerField.type("Beethoven");
       // Click Register button
+      RegistrationPage.registrationButton.click();
       // Set email value to previously created email
+      LoginPage.emailField.type(emailAddress);
       // Set password value to previously used password value
+      LoginPage.passwordField.type(password);
       // Click login button
+      LoginPage.loginButton.click();
       // Click Account button
+      HomePage.accountButton.click();
       // Validate that account name (with previously created email address) appears in the menu section
+      HomePage.userProfileButton.should("contain.text", emailAddress);
     });
   });
 
@@ -46,28 +76,52 @@ describe("Juice-shop scenarios", () => {
 
     it("Search and validate Lemon", () => {
       // Click on search icon
+      HomePage.searchIcon.click();
       // Search for Lemon
+      HomePage.searchField.type("Lemon{enter}");
       // Select a product card - Lemon Juice (500ml)
+      HomePage.productBox.contains("Lemon Juice (500ml)").click();
       // Validate that the card (should) contains "Sour but full of vitamins."
+      HomePage.productInfo.should("contain.text", "Sour but full of vitamins.");
     });
 
     // Create scenario - Search 500ml and validate Lemon, while having multiple cards
-    // Click on search icon
-    // Search for 500ml
-    // Select a product card - Lemon Juice (500ml)
-    // Validate that the card (should) contains "Sour but full of vitamins."
+    it.only("Search 500ml and validate Lemon, while having multiple cards", () => {
+      // Click on search icon
+      HomePage.searchIcon.click();
+      // Search for 500ml
+      HomePage.searchField.type("500ml{enter}");
+      // Select a product card - Lemon Juice (500ml)
+      HomePage.productBox.contains("Lemon Juice (500ml)").click();
+      // Validate that the card (should) contains "Sour but full of vitamins."
+    });
 
     // Create scenario - Search 500ml and validate cards
-    // Click on search icon
-    // Search for 500ml
-    // Select a product card - Eggfruit Juice (500ml)
-    // Validate that the card (should) contains "Now with even more exotic flavour."
-    // Close the card
-    // Select a product card - Lemon Juice (500ml)
-    // Validate that the card (should) contains "Sour but full of vitamins."
-    // Close the card
-    // Select a product card - Strawberry Juice (500ml)
-    // Validate that the card (should) contains "Sweet & tasty!"
+    it.only("Search 500ml and validate cards", () => {
+      // Click on search icon
+      HomePage.searchIcon.click();
+      // Search for 500ml
+      HomePage.searchField.type("500ml{enter}");
+      // Select a product card - Eggfruit Juice (500ml)
+      HomePage.productBox.contains("Eggfruit Juice (500ml)").click();
+      // Validate that the card (should) contains "Now with even more exotic flavour."
+      HomePage.productInfo.should(
+        "contain.text",
+        "Now with even more exotic flavour."
+      )
+      // Close the card
+      HomePage.closeButton.click();
+      // Select a product card - Lemon Juice (500ml)
+      HomePage.productBox.contains("Lemon Juice (500ml)").click();
+      // Validate that the card (should) contains "Sour but full of vitamins."
+      HomePage.productInfo.should("contain.text", "Sour but full of vitamins.");
+      // Close the card
+      HomePage.closeButton.click();
+      // Select a product card - Strawberry Juice (500ml)
+      HomePage.productBox.contains("Strawberry Juice (500ml)").click();
+      // Validate that the card (should) contains "Sweet & tasty!"
+      HomePage.productInfo.should("contain.text", "Sweet & tasty!");
+    });
 
     // Create scenario - Read a review
     // Click on search icon
