@@ -124,27 +124,59 @@ describe("Juice-shop scenarios", () => {
     });
 
     // Create scenario - Read a review
-    // Click on search icon
-    // Search for King
-    // Select a product card - OWASP Juice Shop "King of the Hill" Facemask
-    // Click expand reviews button/icon (wait for reviews to appear)
-    // Validate review - K33p5 y0ur ju1cy 5plu773r 70 y0ur53lf!
+    it.only ("Read a review", () => {
+      // Click on search icon
+      HomePage.searchIcon.click();
+      // Search for King
+      HomePage.searchField.type("King{enter}");
+      // Select a product card - OWASP Juice Shop "King of the Hill" Facemask
+      HomePage.productBox.contains("OWASP Juice Shop \"King of the Hill\" Facemask").click();
+      // Click expand reviews button/icon (wait for reviews to appear)
+      HomePage.productInfo.find("mat-expansion-panel-header").should("be.visible").click();
+      // Validate review - K33p5 y0ur ju1cy 5plu773r 70 y0ur53lf!
+      HomePage.productInfo.should(
+        "contain.text",
+        "K33p5 y0ur ju1cy 5plu773r 70 y0ur53lf!"
+      );
+    });
 
     // Create scenario - Add a review
-    // Click on search icon
-    // Search for Raspberry
-    // Select a product card - Raspberry Juice (1000ml)
-    // Type in review - "Tastes like metal"
-    // Click Submit
-    // Click expand reviews button/icon (wait for reviews to appear)
-    // Validate review -  "Tastes like metal"
+    it.only("Add a review", () => {
+      // Click on search icon
+      HomePage.searchIcon.click();
+      // Search for Raspberry
+      HomePage.searchField.type("Raspberry{enter}");
+      // Select a product card - Raspberry Juice (1000ml)
+      HomePage.productBox.contains("Raspberry Juice (1000ml)").click();
+      // Type in review - "Tastes like metal"
+      HomePage.productInfo.find("textarea").type("Tastes like metal");
+      // Click Submit
+      HomePage.productInfo.find("#submitButton").click();
+      // Click expand reviews button/icon (wait for reviews to appear)
+      HomePage.productInfo.find("mat-expansion-panel-header").should("be.visible").click();
+      // Validate review -  "Tastes like metal"
+      HomePage.productInfo.should(
+        "contain.text",
+        "Tastes like metal"
+      );
+    });
 
     // Create scenario - Validate product card amount
-    // Validate that the default amount of cards is 12
-    // Change items per page (at the bottom of page) to 24
-    // Validate that the amount of cards is 24
-    // Change items per page (at the bottom of page) to 36
-    // Validate that the amount of cards is 35
+    it.only("Validate product card amount", () => {
+      // Validate that the default amount of cards is 12
+      HomePage.productBox.should("have.length", 12);
+      // Change items per page (at the bottom of page) to 24
+      cy.get("div.mat-mdc-paginator-touch-target").click();
+      cy.get("mat-option[role='option']").contains("24").click();
+      // Validate that the amount of cards is 24
+      HomePage.productBox.should("have.length", 24);
+      // Change items per page (at the bottom of page) to 36
+      cy.get("div.mat-mdc-paginator-touch-target").click();
+      cy.get("mat-option[role='option']").contains("36").click();
+      // Validate that the amount of cards is 35
+      HomePage.productBox.should("have.length", 36);
+
+    });
 
     // Create scenario - Buy Girlie T-shirt
     // Click on search icon
