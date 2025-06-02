@@ -45,4 +45,24 @@ export class HomePage extends BasePage {
     return cy.get("button[aria-label='Close Dialog']");
   }
 
+  static get addToBasketButton() {
+    return cy.get("button[aria-label='Add to Basket']");
+  }
+
+  static get basketButton_1() {
+    return cy.get("[aria-label='Show the shopping cart']");
+  }
+
+
+  static get basketButton() {
+    return cy.get("button[aria-label='Show Orders and Payment Menu']");
+  }
+
+  static get savedAddressesButton() {
+    return cy.get("button[aria-label='Go to saved address page']")
+  }
+
+  static get paymentOptionsButton() { 
+    return cy.get("button[aria-label='Go to saved payment methods page']")
+  }
 }

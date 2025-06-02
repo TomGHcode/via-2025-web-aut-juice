@@ -2,6 +2,15 @@ import { homedir } from "os";
 import { HomePage } from "../pageObjects/HomePage";
 import { RegistrationPage } from "../pageObjects/registrationPage";
 import { LoginPage } from "../pageObjects/LoginPage";
+import { BasketPage } from "../pageObjects/BasketPage";
+import { SelectAddressPage } from "../pageObjects/SelectAddressPage";
+import { DeliveryMethodPage } from "../pageObjects/DeliveryMethodPage";
+import { PaymentOptionsPage } from "../pageObjects/PaymentOptionsPage";
+import { OrderSummaryPage } from "../pageObjects/OrderSummaryPage";
+import { OrderCompletionPage } from "../pageObjects/OrderCompletionPage";
+import { SavedAddressesPage } from "../pageObjects/SavedAddressesPage";
+import { CreateAddressPage } from "../pageObjects/CreateAddressPage";
+import { SavedPaymentMethodsPage } from "../pageObjects/SavedPaymentMethodsPage";
 
 describe("Juice-shop scenarios", () => {
   context("Without auto login", () => {
@@ -73,6 +82,7 @@ describe("Juice-shop scenarios", () => {
       cy.login("demo", "demo");
       HomePage.visit();
     });
+
 
     it("Search and validate Lemon", () => {
       // Click on search icon
@@ -149,7 +159,7 @@ describe("Juice-shop scenarios", () => {
       // Select a product card - Raspberry Juice (1000ml)
       HomePage.productBox.contains("Raspberry Juice (1000ml)").click();
       // Type in review - "Tastes like metal"
-      HomePage.productInfo.find("textarea").type("Tastes like metal");
+      HomePage.productInfo.find("textarea").click().type("Tastes like metal");
       // Click Submit
       HomePage.productInfo.find("#submitButton").click();
       // Click expand reviews button/icon (wait for reviews to appear)
@@ -178,49 +188,105 @@ describe("Juice-shop scenarios", () => {
 
     });
 
+
+
     // Create scenario - Buy Girlie T-shirt
-    // Click on search icon
-    // Search for Girlie
-    // Add to basket "Girlie"
-    // Click on "Your Basket" button
-    // Create page object - BasketPage
-    // Click on "Checkout" button
-    // Create page object - SelectAddressPage
-    // Select address containing "United Fakedom"
-    // Click Continue button
-    // Create page object - DeliveryMethodPage
-    // Select delivery speed Standard Delivery
-    // Click Continue button
-    // Create page object - PaymentOptionsPage
-    // Select card that ends with "5678"
-    // Click Continue button
-    // Create page object - OrderSummaryPage
-    // Click on "Place your order and pay"
-    // Create page object - OrderCompletionPage
-    // Validate confirmation - "Thank you for your purchase!"
+    it.only("Buy Girlie T-shirt", () => {
+      // Click on search icon
+      HomePage.searchIcon.click();
+      // Search for Girlie
+      HomePage.searchField.type("Girlie{enter}");
+      // Add to basket "Girlie"
+      HomePage.addToBasketButton.click();
+      // Click on "Your Basket" button
+      HomePage.basketButton_1.click();
+      // Create page object - BasketPage
+      
+      // Click on "Checkout" button
+      BasketPage.CheckoutButton.click();
+      // Create page object - SelectAddressPage
+
+      // Select address containing "United Fakedom"
+      SelectAddressPage.selectAddress.contains("United Fakedom").click();
+      // Click Continue button
+      SelectAddressPage.proceedToPayment.click();
+      // Create page object - DeliveryMethodPage
+      // Select delivery speed Standard Delivery
+      DeliveryMethodPage.chooseDeliverySpeed.contains("Standard Delivery").click();
+      // Click Continue button
+      DeliveryMethodPage.proceedToDelivery.click();
+
+      // Create page object - PaymentOptionsPage
+      // Select card that ends with "5678"
+      PaymentOptionsPage.chooseCard.contains("5678").siblings().children("mat-radio-button").click();
+
+      // Click Continue button
+      PaymentOptionsPage.proceedToReview.click();
+
+      // Create page object - OrderSummaryPage
+      // Click on "Place your order and pay"
+      OrderSummaryPage.placeOrder.click();
+
+      // Create page object - OrderCompletionPage
+      // Validate confirmation - "Thank you for your purchase!"
+      OrderCompletionPage.orderConfirmationMessage.should("contain.text", "Thank you for your purchase!");
+      });
 
     // Create scenario - Add address
-    // Click on Account
-    // Click on Orders & Payment
-    // Click on My saved addresses
-    // Create page object - SavedAddressesPage
-    // Click on Add New Address
-    // Create page object - CreateAddressPage
-    // Fill in the necessary information
-    // Click Submit button
-    // Validate that previously added address is visible
+    it.only("Add adress", () => {
+      // Click on Account
+      HomePage.accountButton.click();
+      // Click on Orders & Payment
+      HomePage.basketButton.click();
+      // Click on My saved addresses
+      HomePage.savedAddressesButton.click();
+      // Create page object - SavedAddressesPage
+      // Click on Add New Address
+      SavedAddressesPage.newAdress.click();
+      // Create page object - CreateAddressPage
+      // Fill in the necessary information
+      const randomNumber = Math.floor(Math.random() * 9000000);
+      const randomAddressNumber = Math.floor(Math.random() * 100) + 1;
+      const randomAddress = `Something street ${randomAddressNumber}`;
 
-    // Create scenario - Add payment option
-    // Click on Account
-    // Click on Orders & Payment
-    // Click on My payment options
-    // Create page object - SavedPaymentMethodsPage
-    // Click Add new card
-    // Fill in Name
-    // Fill in Card Number
-    // Set expiry month to 7
-    // Set expiry year to 2090
-    // Click Submit button
-    // Validate that the card shows up in the list
+      CreateAddressPage.countryField.type("Latvia");
+      CreateAddressPage.nameField.type("Royce");
+      CreateAddressPage.mobileNumberField.type(randomNumber);
+      CreateAddressPage.zipCodeField.type("LV-4201");
+      CreateAddressPage.addressField.type(randomAddress);
+      CreateAddressPage.cityField.type("Valmiera");
+      CreateAddressPage.stateField.type("Vidzeme");
+
+      // Click Submit button
+      CreateAddressPage.submitButton.click();
+      // Validate that previously added address is visible
+      CreateAddressPage.getAddress.should("contain", randomAddress);
+    });
+
+      // Create scenario - Add payment option
+    it.only("Add payment option", () => {
+      // Click on Account
+      HomePage.accountButton.click();
+      // Click on Orders & Payment
+      HomePage.basketButton.click();
+      // Click on My payment options
+      HomePage.paymentOptionsButton.click();
+      // Create page object - SavedPaymentMethodsPage
+      // Click Add new card
+      SavedPaymentMethodsPage.newCard.click();
+      // Fill in Name
+      SavedPaymentMethodsPage.nameField.type("Royce");
+      // Fill in Card Number
+      SavedPaymentMethodsPage.cardNumberField.type("1234567890125678");
+      // Set expiry month to 7
+      SavedPaymentMethodsPage.expiryMonth.select("7");
+      // Set expiry year to 2090
+      SavedPaymentMethodsPage.expiryYear.select("2090");
+      // Click Submit button
+      SavedPaymentMethodsPage.submitButton.click();
+      // Validate that the card shows up in the list
+      SavedPaymentMethodsPage.savedCards.should("contain.text", "Royce").should("contain.text", "7/2090");
+      }
+    );
   });
 });
